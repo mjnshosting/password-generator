@@ -5,7 +5,7 @@
 #Action  - Generate random passwords 3 different ways
 #Status  - Complete
 
-dictionary=words_alpha-5chars.txt
+dictionary=words_alpha-10chars.txt
 
 if [ -e $dictionary ]
 	then
