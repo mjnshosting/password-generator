@@ -120,7 +120,7 @@ case $primary in
 		;;
 	#Generate random alphanumeric with special character randomly inserted
 	-s )
-                password_length=$1; shift
+                password_length=$(( $1 - 2 )); shift
                 secondary=$1; shift
                 count=$1
 
@@ -136,7 +136,7 @@ case $primary in
                                         then
                                                 while [ $i -le $(( $count - 1)) ]
                                                 do
-                                                        echo $((genrandom_alphanumeric_special 20) | sed "s/./&$(random_special_char)/$(genrandom_number 20)" | sed "s/./&$(random_special_char)/$(genrandom_number 20)")
+                                                        echo $((genrandom_alphanumeric_special 18) | sed "s/./&$(random_special_char)/$(genrandom_number 18)" | sed "s/./&$(random_special_char)/$(genrandom_number 18)")
                                                         i=$(( $i+1 ))
                                                 done
                                         else
@@ -195,10 +195,10 @@ case $primary in
                         * )
                                 if [ -z "$password_length" ]
                                         then
-						password=$((genrandom_alphanumeric_special 20) | sed "s/./&$(random_special_char)/$(genrandom_number 20)" | sed "s/./&$(random_special_char)/$(genrandom_number 20)")
+						password=$(head /dev/urandom | tr -dc 'A-Za-z0-9!"#$%&()+,-.:;<>@^_' | head -c 20)
                                                 echo -e "\nPassword: $password \n"
                                         else
-						password=$((genrandom_alphanumeric_special $password_length) | sed "s/./&$(random_special_char)/$(genrandom_number $password_length)" | sed "s/./&$(random_special_char)/$(genrandom_number $password_length)")
+						password=$(head /dev/urandom | tr -dc 'A-Za-z0-9!"#$%&()+,-.:;<>@^_' | head -c $password_length)
                                                 echo -e "\nPassword: $password \n"
                                 fi
                                 ;;
