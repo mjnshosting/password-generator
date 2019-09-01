@@ -28,13 +28,13 @@ function random_special_char {
 #Generates a random alpha numeric string WITH OUT special characters max characters long
 function genrandom_alphanumeric {
 	max=$1
-	echo $RANDOM | sha256sum | base64 | head -c $max
+	head /dev/urandom | tr -dc A-Za-z0-9 | head -c $max
 }
 
 #Generates a random alpha numeric string WITH special characters max characters long
 function genrandom_alphanumeric_special {
 	max=$1
-	echo $RANDOM | sha256sum | base64 | head -c $max
+	head /dev/urandom | tr -dc A-Za-z0-9 | head -c $max
 }
 
 function choose_word {
@@ -143,6 +143,51 @@ case $primary in
                                                 while [ $i -le $(( $count - 1)) ]
                                                 do
                                                         echo $((genrandom_alphanumeric_special $password_length) | sed "s/./&$(random_special_char)/$(genrandom_number $password_length)" | sed "s/./&$(random_special_char)/$(genrandom_number $password_length)")
+                                                        i=$(( $i+1 ))
+                                                done
+                                fi
+                                ;;
+                        * )
+                                if [ -z "$password_length" ]
+                                        then
+						password=$((genrandom_alphanumeric_special 20) | sed "s/./&$(random_special_char)/$(genrandom_number 20)" | sed "s/./&$(random_special_char)/$(genrandom_number 20)")
+                                                echo -e "\nPassword: $password \n"
+                                        else
+						password=$((genrandom_alphanumeric_special $password_length) | sed "s/./&$(random_special_char)/$(genrandom_number $password_length)" | sed "s/./&$(random_special_char)/$(genrandom_number $password_length)")
+                                                echo -e "\nPassword: $password \n"
+                                fi
+                                ;;
+                esac
+                ;;
+
+	#Generate an even more complex random alphanumeric with special character randomly inserted
+	#This option is way better than my implementation but it some password fields do not allow
+	#special chars as the first field. ** Some special chars have been removed from the command.
+	#Source: https://unix.stackexchange.com/a/230676
+	-c )
+                password_length=$1; shift
+                secondary=$1; shift
+                count=$1
+
+                case $secondary in
+                        -c )
+                                if [ -z "$count" ]
+                                        then
+                                                count=10
+                                fi
+
+                                i=0
+                                if [ -z "$password_length" ]
+                                        then
+                                                while [ $i -le $(( $count - 1)) ]
+                                                do
+							head /dev/urandom | tr -dc 'A-Za-z0-9!"#$%&()+,-.:;<>@^_' | head -c 20  ; echo
+                                                        i=$(( $i+1 ))
+                                                done
+                                        else
+                                                while [ $i -le $(( $count - 1)) ]
+                                                do
+							head /dev/urandom | tr -dc 'A-Za-z0-9!"#$%&()+,-.:;<>@^_' | head -c $password_length  ; echo
                                                         i=$(( $i+1 ))
                                                 done
                                 fi
